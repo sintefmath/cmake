@@ -31,16 +31,16 @@ list(APPEND GoTools_LIBRARY_SEARCH_PATHS
 FIND_PATH(GoTools_INCLUDE_DIRS 
   NAMES "GoTools/geometry/SplineSurface.h"
   PATHS ${GoTools_INCLUDE_SEARCH_PATHS}
-  PATH_SUFFIXES GoTools
+#  PATH_SUFFIXES GoTools
 )
-
 
 # Find library path
 FIND_PATH(GoTools_LIBRARY_DIR
-  NAMES GoToolsCore 
+  NAMES GoToolsCore.lib
   PATHS ${GoTools_LIBRARY_SEARCH_PATHS}
   PATH_SUFFIXES GoTools
   )
+
 
 set(GoTools_LIBRARIES "")
 
@@ -65,4 +65,5 @@ endforeach()
 SET(GoTools_FOUND FALSE)
 IF(GoTools_INCLUDE_DIRS AND GoTools_LIBRARIES)
   SET(GoTools_FOUND TRUE)
+  SET(GoTools_INCLUDE_DIR ${GoTools_INCLUDE_DIRS})
 ENDIF(GoTools_INCLUDE_DIRS AND GoTools_LIBRARIES)
