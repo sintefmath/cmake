@@ -6,12 +6,17 @@
 # It will define the following variable(s)
 #  GLM_INCLUDE_DIRS = where glm/glm.hpp can be found
 
+SET(GLM_ROOT "" CACHE PATH "Root to GLM directory")
+MARK_AS_ADVANCED( GLM_ROOT )
+
 find_path(GLM_INCLUDE_DIR
 	NAMES "glm/glm.hpp"
 	HINTS
+        ${GLM_ROOT}/include
 	"~/mylibs/glm"
 	"/usr/local/include/glm"
         "$ENV{PROGRAMFILES(x86)}/glm/include" # This is the default installation path
+
 )
 
 if(NOT GLM_INCLUDE_DIR OR GLM_INCLUDE_DIR MATCHES "NOTFOUND")
