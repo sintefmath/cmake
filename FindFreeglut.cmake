@@ -3,6 +3,9 @@
 # Copyright SINTEF
 # Author: <Erik W. Bjønnes> Erik.Bjonnes@sintef.no
 
+SET(Freeglut_ROOT "" CACHE PATH "Root to freeglut directory")
+MARK_AS_ADVANCED( Freeglut_ROOT )
+
 #find freeglut library
 FIND_LIBRARY(Freeglut_LIBRARY NAMES glut freeglut
   PATHS

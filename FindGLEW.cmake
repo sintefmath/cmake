@@ -2,6 +2,8 @@
 #
 # Copyright <André Rigland Brodtkorb> Andre.Brodtkorb@sintef.no
 #
+SET(GLEW_ROOT "" CACHE PATH "Root to GLEW directory")
+MARK_AS_ADVANCED( GLEW_ROOT )
 
 #Find glew library
 FIND_LIBRARY(GLEW_LIBRARY 
