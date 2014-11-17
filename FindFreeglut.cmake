@@ -6,6 +6,7 @@
 #find freeglut library
 FIND_LIBRARY(Freeglut_LIBRARY NAMES glut freeglut
   PATHS
+  ${Freeglut_ROOT}/lib
   #/usr/lib
   #/usr/lib64
   ~/mylibs/freeglut/lib
@@ -21,6 +22,7 @@ FIND_LIBRARY(Freeglut_LIBRARY NAMES glut freeglut
 #find freeglut header
 FIND_PATH(Freeglut_INCLUDE_DIR NAMES GL/freeglut.h
   PATHS
+  ${Freeglut_ROOT}/include
   /usr/include
   /usr/local/include
   ~/mylibs/freeglut/include
