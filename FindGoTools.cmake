@@ -7,6 +7,9 @@
 
 message("Trying to find the following GoTools components: '${GoTools_FIND_COMPONENTS}'")
 
+SET(GOTOOLS_ROOT "" CACHE PATH "Root to GoTools directory")
+MARK_AS_ADVANCED( GOTOOLS_ROOT )
+
 #Set default search paths for includes
 set(GoTools_INCLUDE_SEARCH_PATHS "")
 list(APPEND GoTools_INCLUDE_SEARCH_PATHS
@@ -31,16 +34,22 @@ list(APPEND GoTools_LIBRARY_SEARCH_PATHS
 FIND_PATH(GoTools_INCLUDE_DIRS 
   NAMES "GoTools/geometry/SplineSurface.h"
   PATHS ${GoTools_INCLUDE_SEARCH_PATHS}
-#  PATH_SUFFIXES GoTools
+  PATH_SUFFIXES GoTools 
 )
+
+SET(GoToolsCoreLibName "")
+IF(WIN32)
+  SET(GoToolsCoreLibName "GoToolsCore.lib")
+ELSE(WIN32)
+  SET(GoToolsCoreLibName "GoToolsCore.so" "GoToolsCore.a")
+ENDIF(WIN32)
 
 # Find library path
 FIND_PATH(GoTools_LIBRARY_DIR
-  NAMES GoToolsCore.lib
+  NAMES ${GoToolsCoreLibName}
   PATHS ${GoTools_LIBRARY_SEARCH_PATHS}
-  PATH_SUFFIXES GoTools
+  PATH_SUFFIXES GoTools Win32/Release Win32/Debug Release Debug
   )
-
 
 set(GoTools_LIBRARIES "")
 
@@ -57,8 +66,6 @@ foreach(component ${GoTools_FIND_COMPONENTS})
 	list(APPEND GoTools_LIBRARIES "${GoTools_${component}_LIBRARY}")
 	message("Gotools libs: ${GoTools_LIBRARIES}")
 endforeach()
-
-
 
 
 # Check that we have found everything
