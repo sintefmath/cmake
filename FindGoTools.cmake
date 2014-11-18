@@ -5,6 +5,7 @@
 # Rewritten to model FindBoost by andre.brodtkorb@sintef.no
 # Rewritten to find optimised&debug by erik.bjonnes@sintef.no
 #
+INCLUDE(FindPackageHandleStandardArgs)
 
 MESSAGE("Trying to find the following GoTools components: '${GoTools_FIND_COMPONENTS}'")
 
@@ -41,6 +42,7 @@ FIND_PATH(GoTools_INCLUDE_DIRS
 
 SET(GoTools_LIBRARIES_DEBUG "")
 SET(GoTools_LIBRARIES_RELEASE "")
+SET(GoTools_ALL_FOUND TRUE INTERNAL)
 
 FOREACH(component ${GoTools_FIND_COMPONENTS})
   FIND_LIBRARY(GoTools_${component}_LIBRARY_RELEASE
@@ -76,6 +78,7 @@ FOREACH(component ${GoTools_FIND_COMPONENTS})
       MESSAGE("Found '${component}'")
     ELSE()
       MESSAGE("Could NOT find '${component}'")
+      SET(GoTools_ALL_FOUND FALSE)
     ENDIF()
 ENDFOREACH()
 
@@ -87,15 +90,12 @@ FOREACH( _libname IN LISTS GoTools_LIBRARIES_DEBUG )
   LIST( APPEND GoTools_LIBRARIES debug "${_libname}" )
 ENDFOREACH()
 
-# Check that we have found everything
-SET(GoTools_FOUND FALSE)
-IF(GoTools_INCLUDE_DIRS AND GoTools_LIBRARIES)
-  SET(GoTools_FOUND TRUE)
-  #show the include directory and libraries found
-  SET(GoTools_INCLUDE_DIR ${GoTools_INCLUDE_DIRS} CACHE STRING "GoTools Libraries requested")
-  SET(GoTools_LIBRARY ${GoTools_LIBRARIES} CACHE STRING "GoTools Libraries requested")
-  #hide the specific lists used to set the above variables
-  SET(GoTools_INCLUDE_DIRS CACHE INTERNAL "There are no dependencies, so this should not be used")
-  SET(GoTools_LIBRARIES CACHE INTERNAL "There are no dependencies, so this should not be used")
-ENDIF(GoTools_INCLUDE_DIRS AND GoTools_LIBRARIES)
+
+SET(GoTools_INCLUDE_DIR ${GoTools_INCLUDE_DIRS} CACHE STRING "GoTools Libraries requested")
+SET(GoTools_LIBRARY ${GoTools_LIBRARIES} CACHE STRING "GoTools Libraries requested")
+SET(GoTools_INCLUDE_DIRS  INTERNAL "There are no dependencies, so this should not be used")
+SET(GoTools_LIBRARIES  INTERNAL "There are no dependencies, so this should not be used")
+
+FIND_PACKAGE_HANDLE_STANDARD_ARGS(GoTools FOUND_VAR GoTools_FOUND 
+  REQUIRED_VARS GoTools_INCLUDE_DIR GoTools_LIBRARY GoTools_ALL_FOUND )
 
