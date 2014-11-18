@@ -5,15 +5,16 @@
 # Rewritten to model FindBoost by andre.brodtkorb@sintef.no
 # Rewritten to find optimised&debug by erik.bjonnes@sintef.no
 #
+INCLUDE(FindPackageHandleStandardArgs)
 
-message("Trying to find the following GoTools components: '${GoTools_FIND_COMPONENTS}'")
+MESSAGE("Trying to find the following GoTools components: '${GoTools_FIND_COMPONENTS}'")
 
 SET(GoTools_ROOT "" CACHE PATH "Root to GoTools directory")
 MARK_AS_ADVANCED( GoTools_ROOT )
 
 #Set default search paths for includes
-set(GoTools_INCLUDE_SEARCH_PATHS "")
-list(APPEND GoTools_INCLUDE_SEARCH_PATHS
+SET(GoTools_INCLUDE_SEARCH_PATHS "")
+LIST(APPEND GoTools_INCLUDE_SEARCH_PATHS
   "${GoTools_ROOT}/include"
   "$ENV{HOME}/include"
   "$ENV{HOME}/install/include"
@@ -22,8 +23,8 @@ list(APPEND GoTools_INCLUDE_SEARCH_PATHS
 )
 	
 #Set default search paths for libs
-set(GoTools_LIBRARY_SEARCH_PATHS "")
-list(APPEND GoTools_LIBRARY_SEARCH_PATHS
+SET(GoTools_LIBRARY_SEARCH_PATHS "")
+LIST(APPEND GoTools_LIBRARY_SEARCH_PATHS
   "${GoTools_ROOT}/lib"
   "$ENV{HOME}/lib"
   "$ENV{HOME}/install/lib"
@@ -39,47 +40,62 @@ FIND_PATH(GoTools_INCLUDE_DIRS
 )
 
 
-set(GoTools_LIBRARIES_DEBUG "")
-set(GoTools_LIBRARIES_RELEASE "")
+SET(GoTools_LIBRARIES_DEBUG "")
+SET(GoTools_LIBRARIES_RELEASE "")
+SET(GoTools_ALL_FOUND TRUE INTERNAL)
 
-foreach(component ${GoTools_FIND_COMPONENTS})
-  message("Finding '${component}'")
-  FIND_LIBRARY(GoTools_${component}_LIBRARY_DEBUG
-    NAMES ${component}
-    PATHS ${GoTools_LIBRARY_SEARCH_PATHS}
-    PATH_SUFFIXES GoTools Debug Win32/Debug 
-    )
-  list(APPEND GoTools_LIBRARIES_DEBUG "${GoTools_${component}_LIBRARY_DEBUG}")
-
+FOREACH(component ${GoTools_FIND_COMPONENTS})
   FIND_LIBRARY(GoTools_${component}_LIBRARY_RELEASE
     NAMES ${component}
     PATHS ${GoTools_LIBRARY_SEARCH_PATHS}
     PATH_SUFFIXES GoTools Release Win32/Release
     )
-  list(APPEND GoTools_LIBRARIES_RELEASE "${GoTools_${component}_LIBRARY_RELEASE}")
+  IF(GoTools_${component}_LIBRARY_RELEASE)
+    LIST(APPEND GoTools_LIBRARIES_RELEASE "${GoTools_${component}_LIBRARY_RELEASE}")
+  ENDIF()
+
+  FIND_LIBRARY(GoTools_${component}_LIBRARY_DEBUG
+    NAMES "${component}d" 
+    PATHS ${GoTools_LIBRARY_SEARCH_PATHS}
+    PATH_SUFFIXES GoTools 
+    )
+  IF(GoTools_${component}_LIBRARY_DEBUG)
+    LIST(APPEND GoTools_LIBRARIES_DEBUG "${GoTools_${component}_LIBRARY_DEBUG}")
+  ENDIF()
+
+  FIND_LIBRARY(GoTools_${component}_LIBRARY_DEBUG
+    NAMES ${component}
+    PATHS ${GoTools_LIBRARY_SEARCH_PATHS}
+    PATH_SUFFIXES  Debug Win32/Debug 
+    )
+  IF(GoTools_${component}_LIBRARY_DEBUG)
+    LIST(APPEND GoTools_LIBRARIES_DEBUG "${GoTools_${component}_LIBRARY_DEBUG}")
+  ENDIF()
+
   MARK_AS_ADVANCED( GoTools_${component}_LIBRARY_DEBUG )
   MARK_AS_ADVANCED( GoTools_${component}_LIBRARY_RELEASE )
+    IF(GoTools_${component}_LIBRARY_DEBUG OR GoTools_${component}_LIBRARY_RELEASE )
+      MESSAGE("Found '${component}'")
+    ELSE()
+      MESSAGE("Could NOT find '${component}'")
+      SET(GoTools_ALL_FOUND FALSE)
+    ENDIF()
+ENDFOREACH()
 
-endforeach()
-
-set( GoTools_LIBRARIES "" )
-foreach( _libname IN LISTS GoTools_LIBRARIES_RELEASE )
-  list( APPEND GoTools_LIBRARIES optimized "${_libname}" )
-endforeach()
-foreach( _libname IN LISTS GoTools_LIBRARIES_DEBUG )
-  list( APPEND GoTools_LIBRARIES debug "${_libname}" )
-endforeach()
+SET( GoTools_LIBRARIES "" )
+FOREACH( _libname IN LISTS GoTools_LIBRARIES_RELEASE )
+  LIST( APPEND GoTools_LIBRARIES optimized "${_libname}" )
+ENDFOREACH()
+FOREACH( _libname IN LISTS GoTools_LIBRARIES_DEBUG )
+  LIST( APPEND GoTools_LIBRARIES debug "${_libname}" )
+ENDFOREACH()
 
 
-# Check that we have found everything
-SET(GoTools_FOUND FALSE)
-IF(GoTools_INCLUDE_DIRS AND GoTools_LIBRARIES)
-  SET(GoTools_FOUND TRUE)
-  #show the include directory and libraries found
-  SET(GoTools_INCLUDE_DIR ${GoTools_INCLUDE_DIRS} CACHE STRING "GoTools Libraries requested")
-  SET(GoTools_LIBRARY ${GoTools_LIBRARIES} CACHE STRING "GoTools Libraries requested")
-  #hide the specific lists used to set the above variables
-  SET(GoTools_INCLUDE_DIRS CACHE INTERNAL "There are no dependencies, so this should not be used")
-  SET(GoTools_LIBRARIES CACHE INTERNAL "There are no dependencies, so this should not be used")
-ENDIF(GoTools_INCLUDE_DIRS AND GoTools_LIBRARIES)
+SET(GoTools_INCLUDE_DIR ${GoTools_INCLUDE_DIRS} CACHE STRING "GoTools Libraries requested")
+SET(GoTools_LIBRARY ${GoTools_LIBRARIES} CACHE STRING "GoTools Libraries requested")
+SET(GoTools_INCLUDE_DIRS  INTERNAL "There are no dependencies, so this should not be used")
+SET(GoTools_LIBRARIES  INTERNAL "There are no dependencies, so this should not be used")
+
+FIND_PACKAGE_HANDLE_STANDARD_ARGS(GoTools FOUND_VAR GoTools_FOUND 
+  REQUIRED_VARS GoTools_INCLUDE_DIR GoTools_LIBRARY GoTools_ALL_FOUND )
 
