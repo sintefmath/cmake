@@ -46,7 +46,7 @@ SET(GoTools_ALL_FOUND TRUE INTERNAL)
 
 FOREACH(component ${GoTools_FIND_COMPONENTS})
   FIND_LIBRARY(GoTools_${component}_LIBRARY_RELEASE
-    NAMES ${component}
+    NAMES ${component} GoTools${component}
     PATHS ${GoTools_LIBRARY_SEARCH_PATHS}
     PATH_SUFFIXES GoTools Release Win32/Release
     )
@@ -55,7 +55,7 @@ FOREACH(component ${GoTools_FIND_COMPONENTS})
   ENDIF()
 
   FIND_LIBRARY(GoTools_${component}_LIBRARY_DEBUG
-    NAMES "${component}d" 
+    NAMES "${component}d" "GoTools${component}d"
     PATHS ${GoTools_LIBRARY_SEARCH_PATHS}
     PATH_SUFFIXES GoTools 
     )
@@ -91,10 +91,11 @@ FOREACH( _libname IN LISTS GoTools_LIBRARIES_DEBUG )
 ENDFOREACH()
 
 
-SET(GoTools_INCLUDE_DIR ${GoTools_INCLUDE_DIRS} CACHE STRING "GoTools Libraries requested")
-SET(GoTools_LIBRARY ${GoTools_LIBRARIES} CACHE STRING "GoTools Libraries requested")
-SET(GoTools_INCLUDE_DIRS  INTERNAL "There are no dependencies, so this should not be used")
-SET(GoTools_LIBRARIES  INTERNAL "There are no dependencies, so this should not be used")
+SET(GoTools_INCLUDE_DIR ${GoTools_INCLUDE_DIRS} CACHE STRING "GoTools Libraries requested" FORCE)
+SET(GoTools_LIBRARY ${GoTools_LIBRARIES} CACHE STRING "GoTools Libraries requested" FORCE)
+
+SET(GoTools_INCLUDE_DIRS  INTERNAL ". There are no dependencies so 'GoTools_INCLUDE_DIRS' should not be used")
+SET(GoTools_LIBRARIES  INTERNAL ". There are no dependencies so 'GoTools_LIBRARIES' should not be used")
 
 FIND_PACKAGE_HANDLE_STANDARD_ARGS(GoTools FOUND_VAR GoTools_FOUND 
   REQUIRED_VARS GoTools_INCLUDE_DIR GoTools_LIBRARY GoTools_ALL_FOUND )
